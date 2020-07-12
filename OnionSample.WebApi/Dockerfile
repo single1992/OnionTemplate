@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["OnionSample/OnionSample.csproj", "OnionSample/"]
-RUN dotnet restore "OnionSample/OnionSample.csproj"
+COPY ["OnionSample.WebApi/OnionSample.WebApi.csproj", "OnionSample.WebApi/"]
+RUN dotnet restore "OnionSample.WebApi/OnionSample.WebApi.csproj"
 COPY . .
-WORKDIR "/src/OnionSample"
-RUN dotnet build "OnionSample.csproj" -c Release -o /app/build
+WORKDIR "/src/OnionSample.WebApi"
+RUN dotnet build "OnionSample.WebApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "OnionSample.csproj" -c Release -o /app/publish
+RUN dotnet publish "OnionSample.WebApi.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "OnionSample.dll"]
+ENTRYPOINT ["dotnet", "OnionSample.WebApi.dll"]

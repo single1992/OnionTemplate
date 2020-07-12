@@ -6,12 +6,16 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using OnionSample.Domain.Interfaces;
+using OnionSample.Infrastructure.Data;
+using OnionSample.Infrastructure.Services;
 
-namespace OnionSample
+namespace OnionSample.WebApi
 {
     public class Startup
     {
@@ -26,6 +30,10 @@ namespace OnionSample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            var connectionStr = Configuration.GetValue<string>("ConStr");
+            services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connectionStr));
+
+            services.AddScoped<IWeatherForecastService, WeatherForecastService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
